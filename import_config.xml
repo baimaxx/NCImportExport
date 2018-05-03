@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean class="nc.ui.pubapp.plugin.action.InsertActionInfo"><!--固定值，表示“插入”按钮-->
+		<property name="action">
+			<ref bean="import_export" />
+		</property>
+ 		<property name="target" ref="pFApproveStatusInfoAction" />
+		<property name="pos" value="after" /><!--在pFApproveStatusInfoAction按钮的前面插入-->
+		<property name="actionContainer" ref="container" /><!--插入到卡片界面-->
+		<property name="actionType" value="notedit" />
+	</bean>
+		
+	<!-- 按钮组 begin -->
+	<bean id="import_export" class="nc.funcnode.ui.action.MenuAction">
+		<property name="code" value="mybtn" />
+		<property name="name" value="导入导出" />
+		<property name="actions">
+			<list>
+				<ref bean="ImportAction" />
+				<ref bean="ExportAction" />
+			</list>
+		</property>
+	</bean>
+	<!-- 按钮组 end -->
+
+	<!--下面这几个name都是SImportAction类中的变量名称，ref引用的bean的class为变量类型，都需要生成getter和setter，注意区分大小写-->
+	<!-- 导入excel-->
+	<bean id="ImportAction" class="nc.ui.so.commission.ace.action.SImportAction">
+		<property name="importableEditor" ref="importEditor" />
+		<property name="model" ref="bmModel"></property>
+		<property name="billForm" ref="billForm" />
+	</bean>
+	
+	<!-- 导出excel-->
+	<bean id="ExportAction" class="nc.ui.so.commission.ace.action.SExportAction">
+		<property name="importableEditor" ref="importEditor" />
+		<property name="model" ref="bmModel"></property>
+		<property name="billForm" ref="billForm" />
+	</bean>
+	
+	<!-- 导入面板 -->
+	<bean id="importEditor" class="nc.ui.so.commission.ace.view.ImportPanel">
+		<property name="model" ref="bmModel"></property>
+		<property name="billcardPanelEditor" ref="billForm" />
+		<property name="cancelAction" ref="cancelAction" />
+ 		<property name="saveAction" ref="saveScriptAction" /> 
+	</bean>
+	
+	<!--原注释： 非流程新增按钮（显示“新增”） -->
+	<bean id="addAction" class="nc.ui.uif2.actions.AddAction">
+		<property name="model" ref="bmModel" />
+		<property name="interceptor">
+			<bean
+				class="nc.ui.pubapp.uif2app.actions.interceptor.CompositeActionInterceptor">
+				<property name="interceptors">
+					<list>
+						<ref bean="cardInterceptor" />
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="cardInterceptor" class="nc.ui.pubapp.uif2app.actions.interceptor.ShowUpComponentInterceptor">
+		<property name="showUpComponent" ref="billForm" />
+	</bean>
+	
+</beans>
